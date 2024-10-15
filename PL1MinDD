@@ -1,0 +1,137 @@
+import numpy as np
+import scipy as sp
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+df = pd.read_csv("C:\\Users\\jgasp\\Downloads\\nba.csv")
+#print(df.head())
+#print(df.columns)
+#print(df.shape)
+#print(df.size)
+#print(df.describe())
+#print(df.max)
+#print(df.College.describe())
+#print(df[['Name','Position','Salary']][10:15])
+#print(df[ df['Position'] == 'PF' ])
+#print(df['Team'].value_counts())
+#print(df[df['Team'] == 'Los Angeles Lakers'].drop('Team', axis=1))
+#print(df.sort_values(by='Salary', ascending=False))
+
+#plt.hist(df['Salary'], bins=20, edgecolor='k')  # You can adjust the number of bins as needed
+#plt.title('Salary Histogram')
+#plt.xlabel('Salary')
+#plt.ylabel('Count')
+#plt.show()
+
+#df['Age'] = pd.to_numeric(df['Age'], errors='coerce')  # 'coerce' trata valores inválidos como NaN
+# Create a boxplot for the 'Age' column
+#plt.boxplot(df['Age'].dropna())  # Remove valores NaN antes de criar o boxplot
+#plt.title('Age Boxplot')
+#plt.ylabel('Age')
+#plt.show()
+
+
+# Create a scatter plot of salary vs. age
+#plt.figure(figsize=(10, 6))  # Set the figure size
+#plt.scatter(df['Age'], df['Salary'], alpha=0.5)  # Create a scatter plot with transparency (alpha)
+#plt.title('Salary vs. Age')
+#plt.xlabel('Age')
+#plt.ylabel('Salary')
+#plt.grid(True)  # Add grid lines
+#plt.show()
+
+#age_salary_average = df.groupby('Age')['Salary'].mean().reset_index()
+#age_salary_average.columns = ['Age', 'Average Salary']
+#print(age_salary_average)
+
+# Calculate the average age and average salary
+#average_age = df['Age'].mean()
+#average_salary = df['Salary'].mean()
+
+# Filter the DataFrame for players meeting the conditions
+#filtered_players = df[(df['Age'] < average_age) & (df['Salary'] > average_salary)]
+
+# Print the filtered players
+#print(filtered_players)
+
+#salary_statistics_by_team = df.groupby('Team')['Salary'].describe()
+#print(salary_statistics_by_team)
+
+#plt.figure(figsize=(12, 6))
+
+# Create a boxplot
+#sns.boxplot(data=df, x='Team', y='Salary')
+#plt.title('Salary vs. Team')
+#plt.xticks(rotation=90)  # Rotate the x-axis labels for better visibility
+
+# Show the plot
+#plt.show()
+
+#average_salary_per_position = df.groupby('Position')['Salary'].mean().reset_index()
+#average_salary_per_position.columns = ['Position', 'Average Salary']
+#print(average_salary_per_position)
+
+#plt.figure(figsize=(12, 6))
+
+# Create a boxplot
+#sns.boxplot(data=df, x='Position', y='Salary')
+#plt.title('Salary vs. Position')
+#plt.xticks(rotation=90)  # Rotate the x-axis labels for better visibility
+
+# Show the plot
+#plt.show()
+
+
+#age_statistics_by_position = df.groupby('Position')['Age'].describe()
+#print(age_statistics_by_position)
+
+#nan_count_per_column = df.isna().sum()
+#print(nan_count_per_column)
+
+df = df.dropna(subset=['Name', 'Team', 'Number', 'Position', 'Age', 'Height', 'Weight'])
+
+# Initialize empty lists to store column names, count of NAs, and percentage of NAs
+columns = []
+na_counts = []
+na_percentages = []
+
+# Iterate through each column
+for col in df.columns:
+    columns.append(col)
+    na_count = df[col].isna().sum()
+    na_counts.append(na_count)
+    na_percentage = (na_count / len(df)) * 100
+    na_percentages.append(na_percentage)
+
+# Create a DataFrame to display the results
+na_summary = pd.DataFrame({
+    'Column': columns,
+    'Number of NAs': na_counts,
+    'Percentage of NAs': na_percentages
+})
+
+#print(na_summary)
+df['College'] = df['College'].fillna('no College')
+
+salary_nan_rows = df[df['Salary'].isna()]
+print(salary_nan_rows)
+
+
+# Calculate the average salary per Team/Position
+average_salary_by_team_position = df.groupby(['Team', 'Position'])['Salary'].transform('mean')
+
+# Use the fillna() method with a function to fill in missing values
+df['Salary'] = df['Salary'].fillna(average_salary_by_team_position)
+
+# Verify the changes
+print(df)
+
+
+total_nan_count = df.isna().sum().sum()
+print("Total number of NaNs in the DataFrame:", total_nan_count)
+
+# Save to a CSV file
+df.to_csv('DataFramePL1.csv', index=False)  
+
+# Save to an Excel file
+df.to_excel('DataFramePL1.xlsx', index=False) 
